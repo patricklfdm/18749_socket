@@ -56,14 +56,18 @@ class Server:
         if len(self.clients) < self.max_clients:
             if unique_id in self.unique_ids:
                 client_number = self.unique_ids[unique_id]
-                # print(f"Reconnected client C{client_number} (ID: {unique_id}) from {addr}")
-                print(f"Reconnected client C{client_number} from {addr}")
+                if globals.DEBUG_MODE:
+                    print(f"Reconnected client C{client_number} (ID: {unique_id}) from {addr}")
+                else:
+                    print(f"Reconnected client C{client_number} from {addr}")
             else:
                 client_number = self.client_counter
                 self.unique_ids[unique_id] = client_number
                 self.client_counter += 1
-                # print(f"New client C{client_number} (ID: {unique_id}) connected from {addr}")
-                print(f"New client C{client_number} connected from {addr}")
+                if globals.DEBUG_MODE:
+                    print(f"New client C{client_number} (ID: {unique_id}) connected from {addr}")
+                else:
+                    print(f"New client C{client_number} connected from {addr}")
             
             self.clients[client_socket] = (client_number, unique_id)
             threading.Thread(target=self.handle_client, args=(client_socket, client_number, unique_id)).start()
@@ -82,6 +86,7 @@ class Server:
                     lfd_socket.send("ALIVE".encode('utf-8'))
                     print("Sent ALIVE message to LFD")
             except ConnectionResetError:
+                print("Connection was reset by the server.")
                 break
         print("LFD disconnected")
         self.lfd_socket = None
@@ -92,20 +97,26 @@ class Server:
                 data = client_socket.recv(1024).decode('utf-8')
                 if not data:
                     break
-                # print(f"Received from client C{client_number} (ID: {unique_id}): {data}")
-                print(f"Received from client C{client_number}: {data}")
+                if globals.DEBUG_MODE:
+                    print(f"Received from client C{client_number} (ID: {unique_id}): {data}")
+                else:
+                    print(f"Received from client C{client_number}: {data}")
                 self.state += 1
                 reply = f"Server reply to C{client_number}: {data.upper()}. Current state: {self.state}"
-                # print(f"Sending to client C{client_number} (ID: {unique_id}): {data.upper()}.")
-                print(f"Sending to client C{client_number}: {data.upper()}.")
+                if globals.DEBUG_MODE:
+                    print(f"Sending to client C{client_number} (ID: {unique_id}): {data.upper()}.")
+                else:
+                    print(f"Sending to client C{client_number}: {data.upper()}.")
                 client_socket.send(reply.encode('utf-8'))
                 print(f"Current server state: {self.state}")
             except ConnectionResetError:
                 break
 
         del self.clients[client_socket]
-        # print(f"Client C{client_number} (ID: {unique_id}) disconnected")
-        print(f"Client C{client_number} disconnected")
+        if globals.DEBUG_MODE:
+            print(f"Client C{client_number} (ID: {unique_id}) disconnected")
+        else:
+            print(f"Client C{client_number} disconnected")
         client_socket.close()
 
 if __name__ == "__main__":
