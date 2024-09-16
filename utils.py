@@ -1,5 +1,6 @@
 # utils.py
 from datetime import datetime
+import globals
 import builtins
 
 def add_timestamp(msg):
@@ -13,7 +14,7 @@ def add_timestamp(msg):
         str: The message with a timestamp in the format [YYYY-MM-DD HH:MM:SS].
     """
     current_time = datetime.now()
-    return f"[{current_time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}"
+    return f"[{current_time.strftime(globals.DATE_FORMAT)}] {msg}"
 
 def print_with_timestamp(*args, **kwargs):
     """

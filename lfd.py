@@ -2,11 +2,12 @@
 import socket
 import time
 import sys
+import globals
 import utils
 from utils import print_with_timestamp as print
 
 class LFD:
-    def __init__(self, server_host='127.0.0.1', server_port=50000, heartbeat_freq=5):
+    def __init__(self, server_host='127.0.0.1', server_port=globals.DEFAULT_PORT_NUM, heartbeat_freq=5):
         self.server_host = server_host
         self.server_port = server_port
         self.heartbeat_freq = heartbeat_freq

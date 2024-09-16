@@ -4,6 +4,7 @@ import threading
 import uuid
 import enum
 import sys
+import globals
 import utils
 from utils import print_with_timestamp as print
 
@@ -13,7 +14,7 @@ class ClientState(enum.Enum):
     WAITING_RESPONSE = 2
 
 class Client:
-    def __init__(self, host='127.0.0.1', port=50000, client_id=1):
+    def __init__(self, host='127.0.0.1', port=globals.DEFAULT_PORT_NUM, client_id=1):
         self.host = host
         self.port = port
         self.client_id = client_id

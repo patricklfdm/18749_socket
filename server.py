@@ -1,11 +1,12 @@
 # server.py
 import socket
 import threading
+import globals
 import utils
 from utils import print_with_timestamp as print
 
 class Server:
-    def __init__(self, host='127.0.0.1', port=50000):
+    def __init__(self, host='127.0.0.1', port=globals.DEFAULT_PORT_NUM):
         self.host = host
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,8 +14,8 @@ class Server:
         self.server_socket.bind((self.host, self.port))
         self.clients = {}  # {client_socket: (client_number, unique_id)}
         self.unique_ids = {}  # {unique_id: client_number}
-        self.max_clients = 3
-        self.my_state = 0
+        self.max_clients = globals.MAX_CLIENT_NUM
+        self.state = 0
         self.lfd_socket = None
         self.client_counter = 1  # Counter for assigning new client numbers
 
@@ -93,12 +94,12 @@ class Server:
                     break
                 # print(f"Received from client C{client_number} (ID: {unique_id}): {data}")
                 print(f"Received from client C{client_number}: {data}")
-                self.my_state += 1
-                reply = f"Server reply to C{client_number}: {data.upper()}. Current state: {self.my_state}"
+                self.state += 1
+                reply = f"Server reply to C{client_number}: {data.upper()}. Current state: {self.state}"
                 # print(f"Sending to client C{client_number} (ID: {unique_id}): {data.upper()}.")
                 print(f"Sending to client C{client_number}: {data.upper()}.")
                 client_socket.send(reply.encode('utf-8'))
-                print(f"Current server state: {self.my_state}")
+                print(f"Current server state: {self.state}")
             except ConnectionResetError:
                 break
 
